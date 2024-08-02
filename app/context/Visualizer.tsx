@@ -70,6 +70,21 @@ export const SortingAlgorithmProvidor = ({
     setArrayToSort(temp);
     setIsAnimationComplete(false);
     setIsSorting(false);
+
+    const highestId = window.setTimeout(() => {
+      for (let i = highestId; i >= 0; i--) window.clearTimeout(i);
+    }, 0);
+
+    setTimeout(() => {
+      const lines = document.getElementsByClassName(
+        "array-line"
+      ) as HTMLCollectionOf<HTMLElement>;
+
+      for (let i = 0; i < lines.length; i++) {
+        lines[i].classList.remove("change-line-color");
+        lines[i].classList.add("default-line-color");
+      }
+    }, 0);
   };
 
   const runAnimation = (animations: AnimationArrayType) => {
@@ -89,7 +104,7 @@ export const SortingAlgorithmProvidor = ({
     ) => {
       indexes.forEach((index) => {
         lines[index].classList.add(addClassName);
-        lines[index].classList.add(addClassName);
+        lines[index].classList.remove(removeClassName);
       });
     };
 
@@ -113,6 +128,25 @@ export const SortingAlgorithmProvidor = ({
         }
       }, index * inverseSpeed);
     });
+
+    const finalTimeout = animations.length * inverseSpeed;
+
+    setTimeout(() => {
+      Array.from(lines).forEach((line) => {
+        line.classList.add("pulse-animation", "change-line-color");
+        line.classList.remove("default-line-color");
+      });
+
+      setTimeout(() => {
+        Array.from(lines).forEach((line) => {
+          line.classList.remove("pulse-animation", "change-line-color");
+          line.classList.add("default-line-color");
+        });
+
+        setIsSorting(false);
+        setIsAnimationComplete(true);
+      }, 1000);
+    }, finalTimeout);
   };
 
   const value = {

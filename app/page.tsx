@@ -4,7 +4,11 @@ import React, { useEffect } from "react";
 import { useSortingAlgorithmContext } from "./context/Visualizer";
 import { Slider } from "./components/input/Slider";
 import { Select } from "./components/input/Select";
-import { algorithmOptions } from "./lib/utils";
+import {
+  algorithmOptions,
+  GenerateAnimationArray,
+  sortingAlgorithmsData,
+} from "./lib/utils";
 import { SortingAlgorithmType } from "./lib/types";
 import { FaPlayCircle } from "react-icons/fa";
 import { RxReset } from "react-icons/rx";
@@ -19,6 +23,7 @@ export default function Home() {
     setSelectedAlgorithm,
     requireReset,
     resetArrayAndAnimation,
+    runAnimation,
   } = useSortingAlgorithmContext();
 
   const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -31,7 +36,12 @@ export default function Home() {
       return;
     }
 
-    // generate animation array
+    GenerateAnimationArray(
+      selectedAlgorithm,
+      isSorting,
+      arrayToSort,
+      runAnimation
+    );
   };
 
   return (
@@ -41,11 +51,11 @@ export default function Home() {
           id="content-container"
           className="flex max-w-[1020px] w-full flex-col lg:px-0 px-4"
         >
-          <div className="h-66 relative flex items-center justify-between w-full">
+          <div className="h-66 relative flex items-center justify-between w-full mt-3">
             <h1 className="text-gray-300 text-2xl font-light hidden md:flex">
               Sorting Visualizer
             </h1>
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-4 mt-3">
               <Slider
                 isDisabled={isSorting}
                 value={animationSpeed}
@@ -59,7 +69,7 @@ export default function Home() {
               />
               <button
                 className="flex items-center justify-center"
-                onClick={() => {}}
+                onClick={handlePlay}
               >
                 {requireReset ? (
                   <RxReset className="text-gray-400 h-8 w-8" />
@@ -67,6 +77,42 @@ export default function Home() {
                   <FaPlayCircle className="text-system-green60 h-8 w-8" />
                 )}
               </button>
+            </div>
+            <div className="hidden sm:flex absolute top-[120%] left-0 w-full mt-3">
+              <div className="flex w-full text-gray-400 p-4 rounded border border-system-purple20 bg-system-purple80 bg-opacity-10 gap-6">
+                <div className="flex flex-col items-start justify-start w-3/4">
+                  <h3 className="text-lg">
+                    {sortingAlgorithmsData[selectedAlgorithm].title}
+                  </h3>
+                  <p className="text-sm text-gray-500 pt-2">
+                    {sortingAlgorithmsData[selectedAlgorithm].description}
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-start justify-start w-1/4 gap-2">
+                  <h3 className="text-lg">Time Complexity</h3>
+                  <div className="flex flex-col gap-2">
+                    <p className="flex w-full text-sm text-gray-500">
+                      <span className="w-28">Worst Case:</span>
+                      <span>
+                        {sortingAlgorithmsData[selectedAlgorithm].worstCase}
+                      </span>
+                    </p>
+                    <p className="flex w-full text-sm text-gray-500">
+                      <span className="w-28">Average Case:</span>
+                      <span>
+                        {sortingAlgorithmsData[selectedAlgorithm].averageCase}
+                      </span>
+                    </p>
+                    <p className="flex w-full text-sm text-gray-500">
+                      <span className="w-28">Best Case:</span>
+                      <span>
+                        {sortingAlgorithmsData[selectedAlgorithm].bestCase}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div className="relative h-[calc(100vh-66px)] w-full">
